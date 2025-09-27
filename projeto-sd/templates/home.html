@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Página Principal{% endblock %}
+
+{% block content %}
+
+<div class="p-5 mb-4 bg-body-tertiary rounded-3 shadow-sm">
+    <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold"> Sistema de Gerenciamento de Monografias</h1>
+        <p class="col-md-10 fs-4">
+            Uma solução moderna para a submissão, orientação e avaliação de Monografias.
+        </p>
+        <hr class="my-4">
+        <p>
+            Este projeto foi desenvolvido por alunos da disciplina de <strong>Sistemas Distribuídos</strong>, do curso
+            de Sistemas de Informação da
+            <strong>Universidade Federal dos Vales do Jequitinhonha e Mucuri (UFVJM)</strong>.
+            O objetivo é aplicar conceitos de arquitetura, segurança e distribuição na criação de uma plataforma
+            funcional e escalável.
+        </p>
+
+        {% if user.is_authenticated %}
+        <a class="btn btn-primary btn-lg" href="{% url 'dashboard' %}" role="button">Acessar meu Painel</a>
+        {% else %}
+        <a class="btn btn-primary btn-lg" href="{% url 'account_login' %}" role="button">Fazer Login</a>
+        <a class="btn btn-secondary btn-lg" href="{% url 'account_signup' %}" role="button">Criar Conta</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row align-items-md-stretch text-center">
+    <div class="col-md-4 mb-4">
+        <div class="h-100 p-5 text-bg-dark rounded-3 shadow">
+            <h2>Perfis de Usuário</h2>
+            <p>Acesso dedicado e seguro para Alunos, Professores Orientadores e Administradores, cada um com suas
+                permissões e dashboards específicos.</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="h-100 p-5 bg-body-tertiary border rounded-3 shadow">
+            <h2>Submissão Simplificada</h2>
+            <p>Processo intuitivo para o envio de versões do TCC, com acompanhamento de status, histórico de alterações
+                e notas.</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="h-100 p-5 text-bg-dark rounded-3 shadow">
+            <h2>Interação e Feedback</h2>
+            <p>Canal direto de comunicação entre orientador e aluno para troca de mensagens, correções e avaliações
+                contínuas.</p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

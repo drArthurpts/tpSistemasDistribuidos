@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Signup" %}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Cadastro de Novo Usuário</h2>
+
+                <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">{{ form.email.label }}</label>
+                        {{ form.email }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.nome_completo.id_for_label }}" class="form-label">{{ form.nome_completo.label }}</label>
+                        {{ form.nome_completo }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.perfil.id_for_label }}" class="form-label">{{ form.perfil.label }}</label>
+                        {{ form.perfil }}
+                    </div>
+                    
+                    <div id="campos_aluno" class="d-none">
+                        <div class="mb-3">
+                            <label for="{{ form.matricula.id_for_label }}" class="form-label">{{ form.matricula.label }}</label>
+                            {{ form.matricula }}
+                        </div>
+                    </div>
+                    <div id="campos_professor" class="d-none">
+                        <div class="mb-3">
+                            <label for="{{ form.titulacao.id_for_label }}" class="form-label">{{ form.titulacao.label }}</label>
+                            {{ form.titulacao }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.area_pesquisa.id_for_label }}" class="form-label">{{ form.area_pesquisa.label }}</label>
+                            {{ form.area_pesquisa }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.password.id_for_label }}" class="form-label">Senha</label>
+                        {{ form.password1 }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.password2.id_for_label }}" class="form-label">{{ form.password2.label }}</label>
+                        {{ form.password2 }}
+                    </div>
+
+                    {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                    {% endif %}
+
+                    <div class="d-grid gap-2 mt-4">
+                         <button class="btn btn-primary btn-lg" type="submit">Cadastrar-se &raquo;</button>
+                    </div>
+                </form>
+                <hr>
+                <div class="text-center">
+                    <p>Já tem uma conta? <a href="{% url 'account_login' %}">Faça o login</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const perfilSelect = document.getElementById('id_perfil');
+    const camposAluno = document.getElementById('campos_aluno');
+    const camposProfessor = document.getElementById('campos_professor');
+    const matriculaInput = document.getElementById('id_matricula');
+    const titulacaoSelect = document.getElementById('id_titulacao');
+    const areaPesquisaInput = document.getElementById('id_area_pesquisa');
+
+    function toggleCampos() {
+        const perfil = perfilSelect.value;
+        if (perfil === 'Aluno') {
+            camposAluno.classList.remove('d-none');
+            camposProfessor.classList.add('d-none');
+            matriculaInput.required = true;
+            titulacaoSelect.required = false;
+            areaPesquisaInput.required = false;
+        } else if (perfil === 'Professor') {
+            camposAluno.classList.add('d-none');
+            camposProfessor.classList.remove('d-none');
+            matriculaInput.required = false;
+            titulacaoSelect.required = true;
+            areaPesquisaInput.required = true;
+        }
+    }
+
+    toggleCampos();
+    perfilSelect.addEventListener('change', toggleCampos);
+});
+</script>
+{% endblock %}

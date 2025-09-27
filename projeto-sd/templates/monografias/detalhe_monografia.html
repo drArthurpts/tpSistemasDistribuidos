@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}{{ monografia.titulo }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h2 class="card-title mb-0">{{ monografia.titulo }}</h2>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-subtitle mb-2 text-muted">Autor(a): {{ monografia.autor.nome_completo }}</h5>
+                    <p class="card-text">
+                        <strong>Orientador(a):</strong> {{ monografia.orientador.nome_completo }} <br>
+                        {% if monografia.coorientador %}
+                        <strong>Coorientador(a):</strong> {{ monografia.coorientador.nome_completo }}
+                        {% endif %}
+                    </p>
+                    <hr>
+
+                    <h5>Resumo</h5>
+                    <p>{{ monografia.resumo|linebreaks }}</p>
+
+                    <h5>Abstract</h5>
+                    <p>{{ monografia.abstract|linebreaks }}</p>
+
+                    <hr>
+
+                    <dl class="row">
+                        <dt class="col-sm-3">Palavras-chave:</dt>
+                        <dd class="col-sm-9">{{ monografia.palavras_chave }}</dd>
+
+                        <dt class="col-sm-3">Status Atual:</dt>
+                        <dd class="col-sm-9"><span class="badge bg-primary">{{ monografia.get_status_display }}</span>
+                        </dd>
+
+                        <dt class="col-sm-3">Data da Submissão:</dt>
+                        <dd class="col-sm-9">{{ monografia.data_criacao|date:"d/m/Y \à\s H:i" }}</dd>
+
+                        <dt class="col-sm-3">Documento:</dt>
+                        <dd class="col-sm-9">
+                            <a href="{{ monografia.documento_pdf.url }}" target="_blank" class="btn btn-success btn-sm">
+                                Baixar PDF
+                            </a>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="card-footer text-end">
+                    <a href="{{ request.META.HTTP_REFERER|default:'/' }}" class="btn btn-secondary">Voltar</a>
+
+
+                    {% if user == monografia.autor.user or user == monografia.orientador.user or user.is_superuser %}
+                    <a href="{% url 'editar_monografia' pk=monografia.pk %}" class="btn btn-warning">Editar</a>
+                    {% endif %}
+
+                    {% if user == monografia.autor.user or user == monografia.orientador.user or user.is_superuser %}
+                    <a href="{% url 'excluir_monografia' pk=monografia.pk %}" class="btn btn-danger">Excluir</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
