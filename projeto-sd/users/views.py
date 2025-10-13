@@ -43,5 +43,12 @@ def dashboard_view(request):
         except request.user._meta.model.professor.RelatedObjectDoesNotExist:
             context['monografias_orientadas'] = []
 
+    if is_aluno:
+        try:
+            aluno_profile = request.user.aluno
+            minhas_monografias = Monografia.objects.filter(autor=aluno_profile).order_by('-data_criacao')
+            context['minhas_monografias'] = minhas_monografias
+        except Exception:
+            context['minhas_monografias'] = []
 
     return render(request, 'dashboard.html', context)

@@ -57,11 +57,32 @@
         </div>
 
         {% elif is_aluno %}
-        <div class="alert alert-success mt-4">
-            <h4>Painel do Aluno</h4>
-            <p>Aqui você pode acompanhar o status da sua monografia ou iniciar uma nova submissão.</p>
-            <a href="{% url 'submeter_monografia' %}" class="btn btn-success mt-2">Submeter Nova Monografia</a>
-        </div>
+            <div class="alert alert-success mt-4">
+                <h4>Painel do Aluno</h4>
+                <p>Aqui você pode acompanhar o status da sua monografia ou iniciar uma nova submissão.</p>
+                <a href="{% url 'submeter_monografia' %}" class="btn btn-success mt-2">Submeter Nova Monografia</a>
+            </div>
+
+            <div class="card mt-4 shadow-sm">
+                <div class="card-header">
+                    <h5>Minhas Submissões</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for monografia in minhas_monografias %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">{{ monografia.titulo }}</h6>
+                                <small class="text-muted">Orientador(a): {{ monografia.orientador.nome_completo|default:"Não definido" }} | Status: <span class="fw-bold">{{ monografia.get_status_display }}</span></small>
+                            </div>
+                            <a href="{% url 'detalhe_monografia' pk=monografia.pk %}" class="btn btn-outline-primary btn-sm">Ver Detalhes</a>
+                        </div>
+                    {% empty %}
+                        <div class="list-group-item">
+                            <p class="text-center text-muted mb-0">Você ainda não submeteu nenhuma monografia.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
 
         {% endif %}
 
