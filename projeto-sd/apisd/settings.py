@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'users', 
     'monografias',
     'simple_history',
+    'widget_tweaks',
 ]
 
 SITE_ID = 1
