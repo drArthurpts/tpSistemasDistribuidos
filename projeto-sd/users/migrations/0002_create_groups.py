@@ -41,8 +41,8 @@ def remove_user_groups(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0001_initial'), 
-        ('monografias', '0001_initial'), 
+        ('monografias', '0001_initial'),
+        ('users', '0001_initial'),
     ]
 
     operations = [
