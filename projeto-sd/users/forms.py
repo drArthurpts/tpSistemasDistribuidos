@@ -57,7 +57,6 @@ class MyCustomSignupForm(SignupForm):
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
 
-    # ⚠️ Correção: usar password1 e password2 (allauth espera esses nomes)
     password1 = forms.CharField(
         label="Senha",
         widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Crie uma senha forte'})
