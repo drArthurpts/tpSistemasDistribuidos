@@ -148,6 +148,29 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# === Configurações do Django REST Framework ===
+REST_FRAMEWORK = {
+    # Define a paginação padrão para a API 
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+
+    # Define que endpoints são restritos por padrão (Leitura permitida, Escrita requer Auth)
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+    
+    # Habilita filtros e ordenação globais 
+    'DEFAULT_FILTER_BACKENDS': [
+        'rest_framework.filters.OrderingFilter',
+    ],
+
+    # Define o formato de resposta padrão como JSON 
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        # Adiciona a interface navegável da API (útil para desenvolvimento)
+        'rest_framework.renderers.BrowsableAPIRenderer', 
+    ),
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

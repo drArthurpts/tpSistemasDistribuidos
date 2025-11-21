@@ -4,10 +4,14 @@ def create_user_groups(apps, schema_editor):
     Group = apps.get_model('auth', 'Group')
     Permission = apps.get_model('auth', 'Permission')
 
-    add_mono = Permission.objects.get(codename='add_monografia')
-    change_mono = Permission.objects.get(codename='change_monografia')
-    delete_mono = Permission.objects.get(codename='delete_monografia')
-    view_mono = Permission.objects.get(codename='view_monografia')
+    try:
+        add_mono = Permission.objects.get(codename='add_monografia')
+        change_mono = Permission.objects.get(codename='change_monografia')
+        delete_mono = Permission.objects.get(codename='delete_monografia')
+        view_mono = Permission.objects.get(codename='view_monografia')
+    except Permission.DoesNotExist:
+        print("Permissões de Monografia não encontradas (possívelmente em ambiente de teste). Pulando criação de grupos.")
+        return
 
     alunos_group, created = Group.objects.get_or_create(name='Alunos')
     if created:
@@ -41,8 +45,11 @@ def remove_user_groups(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('monografias', '0001_initial'),
+        ('contenttypes', '__latest__'), 
+        ('auth', '__latest__'),
+
         ('users', '0001_initial'),
+        ('monografias', '0001_initial')
     ]
 
     operations = [

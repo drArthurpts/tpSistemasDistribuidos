@@ -29,7 +29,13 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('', views.home_view, name='home'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
-    path('monografias/', include('monografias.urls')),
+    
+    # URLs da Parte 1 (CRUD padrão via Templates)
+    path('monografias/', include('monografias.urls')), 
+    
+    # === URLs da Parte 2 (REST API) ===
+    path('api/v1/', include('monografias.api_urls')),
+
 ]
 
 if settings.DEBUG:

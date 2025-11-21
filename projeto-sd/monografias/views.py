@@ -4,6 +4,17 @@ from .forms import MonografiaForm
 from users.models import Aluno 
 from .models import Monografia
 
+from rest_framework import viewsets, permissions, filters
+from .models import Monografia, Banca
+from users.models import Professor
+from .serializers import (
+    MonografiaSerializer, 
+    BancaSerializer, 
+    ProfessorSerializer,
+    MonografiaAprovadaSerializer
+)
+from django.utils import timezone
+
 @login_required
 def submeter_monografia(request):
     try:
@@ -83,4 +94,74 @@ def excluir_monografia(request, pk):
     context = {
         'monografia': monografia
     }
-    return render(request, 'monografias/excluir_monografia.html', context)  
+    return render(request, 'monografias/excluir_monografia.html', context)
+
+class ProfessorPublicViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Endpoint público (somente leitura) para listar Professores Orientadores.
+    """
+    queryset = Professor.objects.all()
+    serializer_class = ProfessorSerializer
+    permission_classes = [permissions.AllowAny] 
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['nome', 'area_pesquisa']
+
+class MonografiaPublicViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Endpoint público (somente leitura) para listar Monografias Aprovadas.
+    """
+    queryset = Monografia.objects.filter(status='APROVADO')
+    serializer_class = MonografiaAprovadaSerializer
+    permission_classes = [permissions.AllowAny]
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['data_defesa', 'titulo', 'autor__nome']
+
+class MonografiaRestrictedViewSet(viewsets.ModelViewSet):
+    """
+    Endpoint restrito (CRUD via autenticação) para gerenciar Monografias.
+    """
+    queryset = Monografia.objects.all()
+    serializer_class = MonografiaSerializer
+    permission_classes = [permissions.IsAuthenticated] 
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['data_criacao', 'titulo', 'status']
+
+    def get_queryset(self):
+        # ... (lógica de permissão de acesso aqui) ...
+        user = self.request.user
+        if hasattr(user, 'aluno'):
+            return Monografia.objects.filter(autor=user.aluno)
+        elif user.is_staff:
+            return Monografia.objects.all()
+        return Monografia.objects.none()
+
+class BancaRestrictedViewSet(viewsets.ModelViewSet):
+    """
+    Endpoint restrito (CRUD) para agendar defesas e registrar notas.
+    """
+    queryset = Banca.objects.all()
+    serializer_class = BancaSerializer
+    permission_classes = [permissions.IsAuthenticated] 
+
+    def perform_create(self, serializer):
+        # ... (lógica de criação e atualização de status) ...
+        banca = serializer.save()
+        monografia = banca.monografia
+        monografia.data_defesa = banca.data_defesa
+        monografia.save()
+
+    def perform_update(self, serializer):
+        # ... (lógica de atualização e registro de nota) ...
+        banca = serializer.save()
+        monografia = banca.monografia
+        
+        if banca.data_defesa:
+            monografia.data_defesa = banca.data_defesa
+
+        if banca.nota_final is not None:
+            if banca.nota_final >= 6.0: 
+                monografia.status = 'APROVADO'
+            else:
+                monografia.status = 'REPROVADO'
+        
+        monografia.save()
